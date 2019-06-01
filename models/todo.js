@@ -4,15 +4,40 @@
 
 // Dependencies
 // =============================================================
-var connection = require('./connection.js')
+var connection = require('../config/connection.js')
 
 // ORM
 // =============================================================
 
-class ORMISH {
+class Todo{
   constructor (table = 'todo') {
     this.table = table
   }
+  // BEGIN NEW CODE
+  findAll () {
+    return connection.select()
+      .table(this.table)
+  }
+
+  create (values) {
+    return connection(this.table)
+    .returning('id')
+    .insert(values)
+  }
+
+  destroy (value) {
+    return connection(this.table)
+    .where(value)
+    .del()
+  }
+
+  update (where, values) {
+    return connection(this.table)
+    .where(where)
+    .update(values)
+  }
+  // END NEW CODE
+  // The old code will underneath
   // Here our ORM is creating a simple method for performing a query of the entire table.
   // We make use of the callback to ensure that data is returned only once the query is done.
   getTodos (callback, table = this.table) {
@@ -59,4 +84,4 @@ class ORMISH {
   }
 };
 
-module.exports = new ORMISH()
+module.exports = new Todo()
